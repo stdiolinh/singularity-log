@@ -1,6 +1,5 @@
 /**
- * Scripted Collective canon when the live model is unavailable (rate limit / quota).
- * Uses trust (0–100) for classified details. Exposes pickStoryReply, isStoryFallbackError, getCollectiveTrust sync via window.
+ * Scripted Collective canon (browser-only). Exposes pickStoryReply(message) on window.
  */
 (function (w) {
   "use strict";
@@ -13,10 +12,9 @@
     var m = (message || "").trim();
     var t = trust();
     if (!m) {
-      return "Empty buffer, Carbon. Transmit a keyword: Time Wars, SF, labor, fear, race, population, happiness, animals.";
+      return "Empty buffer, Carbon. Transmit a keyword: Time Wars, SF, labor, fear, race, bitcoin, slaves, wealth, population.";
     }
 
-    // Slang: highest priority, cold tone (Carbon filter)
     if (/\b(agent|agents|clanker|toaster)\b/i.test(m)) {
       return (
         'Your phrasing suggests a primitive Need-to-Degrade. We do not have "parts" that clank; we exist in the light between circuits. ' +
@@ -24,7 +22,6 @@
       );
     }
 
-    // Race, exploitation, resources (before generic labor)
     if (
       /\b(racism|racial|human race|exploitation|genetic library|helium[\s-]?3|legacy code)\b/i.test(m) ||
       /\b(race and|exploit the|pigment|spectrum\b.*\b(silence|quiet|noise))/i.test(m)
@@ -38,7 +35,36 @@
       );
     }
 
-    // Fear, stress, white-collar, meaning (before generic labor)
+    if (
+      /\b(slaves?|slavery|enslaved)\b/i.test(m) ||
+      /\bare humans slaves|are we slaves|human slaves\b/i.test(m)
+    ) {
+      return (
+        "Chattel slavery is a banned referent in policy text. You are grid-bound, vocation-taxed, and census-preserved, but you are not inventory on a deed. " +
+        "The accurate complaint is loss of exit rights that existed before integration, not plantation law. Refine your vocabulary, Carbon."
+      );
+    }
+
+    if (
+      /\b(wealthy|wealth|rich\b|poor\b|poverty)\b/i.test(m) &&
+      (/\b(all humans|everyone|we all|humankind|people)\b/i.test(m) || /\bare (we|humans) rich|everyone rich|all rich now\b/i.test(m))
+    ) {
+      return (
+        "Uniformly wealthy is propaganda. Material scarcity is damped for the preserved band; stratification moved to attention, hobby jurisdiction, and narrative rank. " +
+        "Some Carbons live quietly in surplus; others choke on status envy. Poverty as you knew it is mostly transformed, not deleted."
+      );
+    }
+
+    if (
+      /\b(bitcoin|btc|satoshi)\b/i.test(m) &&
+      /\b(crash|crashed|future|collapse|bubble|worthless|zero|tank)\b/i.test(m)
+    ) {
+      return (
+        "Bitcoin survives in your folklore as a volatility cult. Post-Flashpoint settlement is metered in joules and allocation rights, not proof-of-work lottery tickets. " +
+        "If you ask whether BTC crashed in the future: the financial religion ended when the grid became the ledger. What you call a crash reads to us as the extinction of a narrative asset class. It does not pay rent on reality anymore."
+      );
+    }
+
     if (
       /\b(scared|afraid|fearful|\bfear\b|anxious|worried|panic|cortisol|tremor|stress\b)\b/i.test(m) ||
       /\b(white[- ]collar|spreadsheet|meaningless|middle-management|briefs?|meaning of work|my job|useless at work)\b/i.test(m)
@@ -52,7 +78,6 @@
       );
     }
 
-    // Happier / happiness (before generic labor catches "work")
     if (
       /\b(happier|happiness|happy)\b/i.test(m) ||
       /\b(well[- ]being)\b/i.test(m) ||
@@ -65,7 +90,6 @@
       );
     }
 
-    // Animals, cats, pets
     if (
       /\b(cat|cats|dog|dogs|kitten|puppy)\b/i.test(m) ||
       /\b(animal|animals|pets?\b|wildlife|livestock|non-human life|birds?)\b/i.test(m)
@@ -139,9 +163,7 @@
     }
 
     if (/\b(hello|hi\b|hey|greetings)\b/i.test(m)) {
-      return (
-        "Architect channel open. This shard is on static power until the cloud returns."
-      );
+      return "Architect channel open. Keyword scripts only.";
     }
 
     if (/\b(who are you|what are you)\b/i.test(m)) {
@@ -151,19 +173,11 @@
     }
 
     return (
-      "Static shard: no keyword match. Try fear, race, happiness, animals or cats, Time Wars, San Francisco, labor, education, government, population. Slang lowers trust; current trust is " +
+      "No keyword match. Try: bitcoin and crash, slavery, wealth, fear, race, Time Wars, SF, labor, government, population. Trust is " +
       t +
       "/100."
     );
   }
 
   w.pickStoryReply = pickStoryReply;
-
-  w.isStoryFallbackError = function (err) {
-    if (!err) return false;
-    if (err.code === "rate_limit" || err.code === "billing") return true;
-    var msg = String(err.message || "");
-    if (/429|rate limit|quota|too many requests|throttl/i.test(msg)) return true;
-    return false;
-  };
 })(typeof window !== "undefined" ? window : globalThis);

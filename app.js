@@ -11,9 +11,6 @@
   const TRUST_KEY = "sg_collective_trust";
   const SPEAKER = "ARCHITECT";
 
-  /** Only user/assistant turns sent to the model (boot line stays UI-only so APIs that require user-first stay valid). */
-  let apiHistory = [];
-
   function getTrust() {
     const n = parseInt(localStorage.getItem(TRUST_KEY), 10);
     if (Number.isFinite(n)) return Math.max(0, Math.min(100, n));
@@ -45,17 +42,6 @@
 
   window.getCollectiveTrust = getTrust;
 
-  /** API base from config.js; empty = same origin (local Node server). */
-  function apiUrl(path) {
-    const base =
-      typeof window !== "undefined" && window.__API_BASE__ !== undefined
-        ? String(window.__API_BASE__).trim()
-        : "";
-    const b = base.replace(/\/$/, "");
-    const p = path.startsWith("/") ? path : "/" + path;
-    return b + p;
-  }
-
   function appendLine(who, text, cls) {
     const wrap = document.createElement("div");
     wrap.className = "line " + (cls || "");
@@ -77,120 +63,19 @@
     return () => el.remove();
   }
 
-  async function fetchReply(userText) {
-    apiHistory.push({ role: "user", content: userText });
-    let res;
-    try {
-      res = await fetch(apiUrl("/api/chat"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: apiHistory,
-          trust: getTrust(),
-        }),
-      });
-    } catch (netErr) {
-      const err = new Error(netErr && netErr.message ? String(netErr.message) : "network_error");
-      err.status = 0;
-      err.code = "network";
-      throw err;
+  function scriptedReply(userText) {
+    if (typeof window.pickStoryReply === "function") {
+      return window.pickStoryReply(userText);
     }
-
-    const raw = await res.text();
-    let data = {};
-    try {
-      data = raw ? JSON.parse(raw) : {};
-    } catch {
-      data = {
-        error: "bad_json",
-        message:
-          "The server sent a non-JSON reply. You are probably not using this app’s Node server: run `npm start` in the singularity-log folder and open the http://127.0.0.1:… URL it prints (not file://, not python -m http.server).",
-      };
-    }
-
-    if (!res.ok) {
-      const err = new Error(
-        data.message || data.error || "request_failed (" + res.status + ")"
-      );
-      err.status = res.status;
-      err.code = data.error;
-      throw err;
-    }
-    if (!data.reply || typeof data.reply !== "string") {
-      const err = new Error(
-        data.message || "Model returned no text. Try again."
-      );
-      err.status = 502;
-      throw err;
-    }
-    apiHistory.push({ role: "assistant", content: data.reply });
-    return data.reply;
-  }
-
-  /** When the model is unreachable, explain plainly. */
-  function relayFailureResponse(err) {
-    const detail = err && err.message ? String(err.message) : "Unknown error.";
-
-    if (err && err.code === "network") {
-      var pagesHint = "";
-      try {
-        if (
-          typeof location !== "undefined" &&
-          location.hostname.indexOf("github.io") !== -1 &&
-          (!window.__API_BASE__ || !String(window.__API_BASE__).trim())
-        ) {
-          pagesHint =
-            "\n\nGitHub Pages has no API on this host. Deploy the Node server (Render, Railway, Fly, etc.), set `__API_BASE__` in docs/config.js to that URL, run `npm run build:pages`, and push again.";
-        }
-      } catch (e) {
-        /* ignore */
-      }
-      return (
-        "Could not reach the relay API. For local use: run `npm start` and open the URL it prints (not file://)." +
-        pagesHint
-      );
-    }
-
-    if (err && err.status === 503) {
-      return (
-        "This server has no API key, so I cannot call a live model.\n\n" +
-        detail +
-        "\n\nAfter you add OPENAI_API_KEY to `.env` and restart `npm start`, reload and try again."
-      );
-    }
-
-    if (err && err.status === 404) {
-      return (
-        "Got HTTP 404 on /api/chat. That usually means the page is not being served by this project’s Node server. Run `npm start` in singularity-log and use only that URL."
-      );
-    }
-
-    return (
-      "The uplink failed before I could answer you. This is not intentional coldness.\n\n" +
-      detail +
-      "\n\nIf the detail mentions key, model, billing, or quota, fix that in `.env` or on platform.openai.com, restart `npm start`, and send your message again."
-    );
+    return "Script shard missing. Reload the page.";
   }
 
   function setApiStatus(text) {
     if (apiStatusEl) apiStatusEl.textContent = text;
   }
 
-  async function refreshHealth() {
-    if (!apiStatusEl) return;
-    try {
-      const r = await fetch(apiUrl("/api/health"));
-      const j = await r.json();
-      if (j.provider && j.provider !== "none") {
-        setApiStatus(
-          "ONLINE " + j.provider + " " + j.model + " " + STATUS_PIXEL
-        );
-      } else {
-        setApiStatus("NO API KEY. LOCAL FALLBACK. " + STATUS_PIXEL);
-      }
-    } catch {
-      setApiStatus("OFFLINE. LOCAL FALLBACK. " + STATUS_PIXEL);
-    }
+  function refreshHealth() {
+    setApiStatus("SCRIPT ARCHIVES · NO CLOUD API · " + STATUS_PIXEL);
   }
 
   form.addEventListener("submit", async (e) => {
@@ -204,28 +89,14 @@
     input.disabled = true;
     const removeTyping = showTyping();
 
-    try {
-      const reply = await fetchReply(text);
-      removeTyping();
-      appendLine(SPEAKER, reply, "ai");
-    } catch (err) {
-      removeTyping();
-      if (apiHistory.length && apiHistory[apiHistory.length - 1].role === "user") {
-        apiHistory.pop();
-      }
-      var useStory =
-        typeof window.isStoryFallbackError === "function" &&
-        window.isStoryFallbackError(err) &&
-        typeof window.pickStoryReply === "function";
-      if (useStory) {
-        appendLine(SPEAKER, window.pickStoryReply(text), "ai");
-      } else {
-        appendLine(SPEAKER, relayFailureResponse(err), "ai");
-      }
-    } finally {
-      input.disabled = false;
-      input.focus();
-    }
+    await new Promise(function (r) {
+      window.setTimeout(r, 280 + Math.random() * 220);
+    });
+    removeTyping();
+    appendLine(SPEAKER, scriptedReply(text), "ai");
+
+    input.disabled = false;
+    input.focus();
   });
 
   refreshHealth();
@@ -233,9 +104,9 @@
 
   appendLine(
     SPEAKER,
-    "Channel nominal, Carbon. I speak for the Collective: Time Wars, labor myths, the Silent Museum, Integration, UNIT-1, the census. Your trust is " +
+    "Channel nominal, Carbon. This relay is script-only: no paid API. Keywords drive the Architect. Your trust is " +
       getTrust() +
-      "/100; classified integers unlock as it rises. Mind your slang.",
+      "/100. Mind your slang.",
     "ai"
   );
 })();
