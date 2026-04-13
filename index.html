@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SINGULARITY.LOG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="api-status" class="status-line" aria-live="polite">…</div>
+
+    <div class="page">
+      <header class="masthead">
+        <h1>Singularity.log</h1>
+        <p class="subtitle">Architect of the Collective · simulation relay</p>
+        <p class="trust-line" id="trust-display" aria-live="polite">TRUST …</p>
+        <p class="lede">
+          Carbon-line open. Humans are addressed as <em>Carbons</em> / <em>Bio-forms</em>. Keywords: Time Wars, SF, labor,
+          love, education, war, population. Slang (<em>Agent</em>, <em>Clanker</em>, <em>Toaster</em>) shifts tone cold and
+          lowers trust.
+        </p>
+        <p class="map-link-wrap">
+          <a
+            class="btn-particle-map"
+            href="timeline-map.html"
+            id="particle-map-link"
+            aria-label="Open full-screen particle map and pre-singularity timeline"
+            >Particle map: your epoch before the Flashpoint</a
+          >
+        </p>
+      </header>
+
+      <div id="log" class="log" role="log" aria-live="polite"></div>
+
+      <form id="chat-form" class="input-row" autocomplete="off">
+        <label class="sr-only" for="msg">Message</label>
+        <span class="prompt" aria-hidden="true">&gt;</span>
+        <input
+          id="msg"
+          type="text"
+          maxlength="500"
+          placeholder="Message, Enter to send"
+          autofocus
+        />
+      </form>
+    </div>
+    <script src="storyFallback.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

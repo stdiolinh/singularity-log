@@ -1,0 +1,238 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #080808;
+  --fg: #e8e8e8;
+  --muted: #9a9a9a;
+  --dim: #5c5c5c;
+  --line: #1a1a1a;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family:
+    ui-monospace,
+    "SF Mono",
+    "Cascadia Mono",
+    "Roboto Mono",
+    "Courier New",
+    monospace;
+  font-size: 16px;
+  line-height: 1.65;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Top status — terminal ticker */
+.status-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 10px 20px 10px 24px;
+  font-size: 11px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(230, 230, 230, 0.85);
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Narrow column, manifesto-style */
+.page {
+  max-width: 720px;
+  margin: 0;
+  padding: 56px 24px 48px 48px;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding-left: 24px;
+    padding-right: 20px;
+  }
+}
+
+.masthead {
+  margin-bottom: 2rem;
+}
+
+.masthead h1 {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.subtitle {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+}
+
+.trust-line {
+  margin: 0 0 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.lede {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.lede em {
+  font-style: italic;
+  color: var(--fg);
+}
+
+.map-link-wrap {
+  margin: 1.25rem 0 0;
+}
+
+/* Flat neon green on dark bar (terminal strip — no glow / gradient fill) */
+.btn-particle-map {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 12px 12px;
+  min-height: 52px;
+  line-height: 1.25;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: "VT323", "Inconsolata", "Courier New", monospace;
+  font-size: clamp(1.1rem, 2.8vw, 2rem);
+  font-weight: 400;
+  letter-spacing: 2px;
+  word-spacing: 0.15em;
+  text-transform: none;
+  text-decoration: none;
+  text-shadow: none;
+  color: #00ff33;
+  background-color: #0b0b0b;
+  background-image: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  border-top: 2px solid #1a1a1a;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+
+.btn-particle-map:hover {
+  color: #33ff66;
+  background-color: #0f0f0f;
+  filter: none;
+  box-shadow: none;
+}
+
+.btn-particle-map:focus-visible {
+  outline: 1px solid #00ff33;
+  outline-offset: 2px;
+}
+
+.log {
+  margin-bottom: 1.5rem;
+  min-height: 42vh;
+  max-height: min(52vh, 480px);
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.line {
+  margin-bottom: 1.35rem;
+  max-width: 62ch;
+  word-wrap: break-word;
+}
+
+.line .who {
+  margin: 0 0 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--dim);
+}
+
+.line.user .who {
+  color: var(--muted);
+}
+
+.line.ai .body {
+  margin: 0;
+  color: var(--fg);
+}
+
+.line.typing .body {
+  color: var(--dim);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.input-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  max-width: 62ch;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.prompt {
+  flex-shrink: 0;
+  color: var(--dim);
+  user-select: none;
+}
+
+.input-row input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--fg);
+  font: inherit;
+  padding: 6px 0 8px;
+  outline: none;
+}
+
+.input-row input::placeholder {
+  color: var(--dim);
+}
+
+.input-row input:focus {
+  border-bottom-color: var(--muted);
+}
