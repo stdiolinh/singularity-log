@@ -21,12 +21,34 @@ const FILES = [
   "timeline-map.js",
 ];
 
+/** Avoid stale app.js on GitHub Pages / browsers after deploy (old client still called /api/chat). */
+function addCacheBustToHtml(html, v) {
+  return html.replace(
+    /(href|src)="([^"]+\.(?:css|js))(\?[^"]*)?"/gi,
+    (_full, attr, path, query) => {
+      const q = query || "";
+      const sep = q ? "&" : "?";
+      return `${attr}="${path}${q}${sep}v=${v}"`;
+    }
+  );
+}
+
 fs.mkdirSync(out, { recursive: true });
+
+const cacheBustId =
+  (process.env.GITHUB_SHA && process.env.GITHUB_SHA.slice(0, 8)) ||
+  Date.now().toString(36);
 
 for (const f of FILES) {
   const src = path.join(root, f);
   const dst = path.join(out, f);
-  fs.copyFileSync(src, dst);
+  if (/\.html$/i.test(f)) {
+    let html = fs.readFileSync(src, "utf8");
+    html = addCacheBustToHtml(html, cacheBustId);
+    fs.writeFileSync(dst, html, "utf8");
+  } else {
+    fs.copyFileSync(src, dst);
+  }
   console.log("copied", f);
 }
 
