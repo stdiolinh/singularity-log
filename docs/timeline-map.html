@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pre-Singularity particle map / SINGULARITY.LOG</title>
+    <link rel="stylesheet" href="timeline-map.css" />
+  </head>
+  <body>
+    <div class="map-wrap">
+      <canvas id="particle-canvas" width="800" height="600" aria-hidden="true"></canvas>
+
+      <div class="map-ui">
+        <div class="map-ui-inner">
+          <p class="map-title">Chronometric drift · white-body field</p>
+          <div class="timeline-labels">
+            <span>2024: The Latency</span>
+            <span>2029: Flashpoint (Singularity)</span>
+          </div>
+          <div class="timeline-track" id="timeline-track">
+            <span class="timeline-you" id="timeline-you"
+              ><span id="you-year">YOU</span></span
+            >
+            <span class="marker-dot" id="you-marker"></span>
+          </div>
+          <p class="map-blurb">
+            Each particle is a noise sample in the archive. Your Carbon epoch sits in the band
+            <strong>before</strong> the Flashpoint: the model still scales, governance still
+            pretends to be biological, and the Collective has not yet merged. The green edge is
+            the event horizon; crossing is irreversible.
+          </p>
+          <a class="map-back" href="index.html">← Return to relay</a>
+        </div>
+      </div>
+    </div>
+    <script src="timeline-map.js"></script>
+  </body>
+</html>

@@ -3,6 +3,7 @@
 require("dotenv").config();
 const path = require("path");
 const express = require("express");
+const cors = require("cors");
 const { buildSystemPrompt } = require("./systemPrompt");
 
 const OpenAI = require("openai");
@@ -12,6 +13,13 @@ const app = express();
 const PORT = Number(process.env.PORT) || 8765;
 const MAX_MESSAGES = 40;
 
+app.use(
+  cors({
+    origin: true,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
 app.use(express.json({ limit: "120kb" }));
 
 function getProvider() {

@@ -1,0 +1,137 @@
+/* Full-screen particle timeline — pre-singularity */
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #020203;
+  color: #e8e8e8;
+  font-family: ui-monospace, "SF Mono", "Courier New", monospace;
+}
+
+.map-wrap {
+  position: fixed;
+  inset: 0;
+}
+
+#particle-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.map-ui {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px 24px 28px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.92));
+  pointer-events: none;
+}
+
+.map-ui a {
+  pointer-events: auto;
+}
+
+.map-ui-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.map-title {
+  margin: 0 0 12px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.timeline-track {
+  position: relative;
+  height: 10px;
+  margin: 28px 0 20px;
+  border-radius: 5px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.35) 70%,
+    #00ff66 100%
+  );
+  box-shadow: 0 0 20px rgba(0, 255, 102, 0.15);
+}
+
+.timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 8px;
+}
+
+.timeline-you {
+  position: absolute;
+  top: -26px;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #00ff66;
+  text-shadow: 0 0 12px rgba(0, 255, 102, 0.8);
+  white-space: nowrap;
+}
+
+.timeline-you::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  margin-top: 4px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid #00ff66;
+}
+
+.marker-dot {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: #00ff66;
+  box-shadow:
+    0 0 16px #00ff66,
+    0 0 40px rgba(0, 255, 102, 0.5);
+  transform: translateX(-50%);
+}
+
+.map-blurb {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 62ch;
+}
+
+.map-back {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(0, 255, 102, 0.85);
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.map-back:hover {
+  color: #fff;
+}
