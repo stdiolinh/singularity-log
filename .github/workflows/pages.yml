@@ -1,5 +1,6 @@
 # Build static site into docs/ and deploy to GitHub Pages.
-# Repo Settings → Pages → Source: GitHub Actions.
+# Repo Settings → Pages → Source: must be "GitHub Actions" (not "Deploy from a branch / root"
+# or /docs alone), or the site can serve stale root files while Actions updates something else.
 
 name: Deploy GitHub Pages
 

@@ -8,6 +8,8 @@
   const trustDisplayEl = document.getElementById("trust-display");
 
   const STATUS_PIXEL = "BLACK/WHITE PIXEL MODE";
+  /** Bump index.html ?v= when changing behavior (breaks cached app.js on GitHub Pages root deploy). */
+  const CLIENT_ASSET_VER = "5";
   const TRUST_KEY = "sg_collective_trust";
   const SPEAKER = "ARCHITECT";
 
@@ -75,7 +77,12 @@
   }
 
   function refreshHealth() {
-    setApiStatus("SCRIPT ARCHIVES · NO CLOUD API · " + STATUS_PIXEL);
+    setApiStatus(
+      "SCRIPT ARCHIVES · NO CLOUD API · client " +
+        CLIENT_ASSET_VER +
+        " · " +
+        STATUS_PIXEL
+    );
   }
 
   form.addEventListener("submit", async (e) => {
